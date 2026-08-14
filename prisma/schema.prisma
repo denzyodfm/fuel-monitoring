@@ -8,7 +8,7 @@ datasource db {
 
 enum Role {
   ADMINISTRATOR
-  ENCODER
+  STAFF
   APPROVER
   VIEWER
 }
@@ -379,4 +379,3 @@ model AppSetting {
   value Json
   updatedAt DateTime @updatedAt
 }
-
