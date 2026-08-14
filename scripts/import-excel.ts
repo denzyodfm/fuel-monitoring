@@ -1,0 +1,3 @@
+import {readFile} from "fs/promises";import {resolve} from "path";import {parseWorkbook} from "../lib/excel";
+async function main(){const path=resolve(process.argv[2]??process.env.IMPORT_WORKBOOK_PATH??"");if(!path)throw new Error("Pass a workbook path or set IMPORT_WORKBOOK_PATH");const parsed=parseWorkbook(await readFile(path));console.log(JSON.stringify({file:path,checksum:parsed.checksum,sheets:parsed.classified,validTransactionRows:parsed.rows.length,rejectedRows:parsed.rejected.length,note:"Use the administrator import wizard to confirm mappings and commit this analyzed batch."},null,2))}
+main().catch(error=>{console.error(error);process.exitCode=1});

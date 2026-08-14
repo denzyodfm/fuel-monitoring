@@ -1,0 +1,382 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMINISTRATOR
+  ENCODER
+  APPROVER
+  VIEWER
+}
+enum TransactionStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  LOCKED
+}
+enum TransactionSource {
+  MANUAL
+  EXCEL_IMPORT
+}
+enum VehicleStatus {
+  ACTIVE
+  UNDER_REPAIR
+  STANDBY
+  SOLD
+  RETIRED
+}
+enum ImportStatus {
+  UPLOADED
+  VALIDATED
+  IMPORTING
+  COMPLETED
+  FAILED
+  DRY_RUN
+}
+enum ImportRowStatus {
+  PENDING
+  VALID
+  REJECTED
+  IMPORTED
+  DUPLICATE
+  AMBIGUOUS
+}
+enum GeneralStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  PAID
+  CANCELLED
+  ACTIVE
+  EXPIRED
+}
+
+model Organization {
+  id String @id @default(cuid())
+  name String @unique
+  users User[]
+  companies Company[]
+  vehicles Vehicle[]
+  operators Operator[]
+  purposes Purpose[]
+  transactions FuelTransaction[]
+  imports ImportBatch[]
+  createdAt DateTime @default(now())
+}
+model User {
+  id String @id @default(cuid())
+  organizationId String
+  role Role @default(VIEWER)
+  email String @unique
+  name String
+  passwordHash String
+  active Boolean @default(true)
+  lastLoginAt DateTime?
+  organization Organization @relation(fields:[organizationId],references:[id])
+  createdTransactions FuelTransaction[] @relation("CreatedBy")
+  updatedTransactions FuelTransaction[] @relation("UpdatedBy")
+  approvedTransactions FuelTransaction[] @relation("ApprovedBy")
+  imports ImportBatch[]
+  auditLogs AuditLog[]
+  approvals TransactionApproval[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([organizationId,role])
+}
+model Company {
+  id String @id @default(cuid())
+  organizationId String
+  code String
+  name String
+  type String @default("COMPANY")
+  active Boolean @default(true)
+  defaultPayerId String?
+  notes String?
+  organization Organization @relation(fields:[organizationId],references:[id])
+  defaultPayer Company? @relation("Payer",fields:[defaultPayerId],references:[id])
+  payees Company[] @relation("Payer")
+  vehicles Vehicle[]
+  operators Operator[]
+  purposes Purpose[]
+  transactions FuelTransaction[]
+  chargedPayables AccountPayable[] @relation("ChargedCompany")
+  paidPayables AccountPayable[] @relation("PaidByCompany")
+  @@unique([organizationId,code])
+}
+model Operator {
+  id String @id @default(cuid())
+  organizationId String
+  companyId String?
+  fullName String
+  employeeCode String?
+  contact String?
+  active Boolean @default(true)
+  organization Organization @relation(fields:[organizationId],references:[id])
+  company Company? @relation(fields:[companyId],references:[id])
+  aliases OperatorAlias[]
+  transactions FuelTransaction[]
+  @@index([organizationId,fullName])
+}
+model OperatorAlias {
+  id String @id @default(cuid())
+  operatorId String
+  value String
+  normalized String
+  operator Operator @relation(fields:[operatorId],references:[id],onDelete:Cascade)
+  @@unique([operatorId,normalized])
+}
+model Vehicle {
+  id String @id @default(cuid())
+  organizationId String
+  companyId String?
+  plateNumber String
+  assetName String?
+  vehicleType String?
+  make String?
+  model String?
+  color String?
+  year Int?
+  acquisitionDate DateTime?
+  registeredOwner String?
+  assignedDriver String?
+  beginningOdometer Decimal? @db.Decimal(14,2)
+  currentOdometer Decimal? @db.Decimal(14,2)
+  fuelType String?
+  odometerRequired Boolean @default(true)
+  status VehicleStatus @default(ACTIVE)
+  remarks String?
+  organization Organization @relation(fields:[organizationId],references:[id])
+  company Company? @relation(fields:[companyId],references:[id])
+  aliases VehicleAlias[]
+  transactions FuelTransaction[]
+  odometerLogs OdometerLog[]
+  assignments VehicleAssignment[]
+  policies InsurancePolicy[]
+  @@unique([organizationId,plateNumber])
+  @@index([organizationId,status])
+}
+model VehicleAlias {
+  id String @id @default(cuid())
+  vehicleId String
+  value String
+  normalized String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id],onDelete:Cascade)
+  @@unique([vehicleId,normalized])
+}
+model VehicleAssignment {
+  id String @id @default(cuid())
+  vehicleId String
+  companyId String?
+  driverName String?
+  startDate DateTime
+  endDate DateTime?
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  @@index([vehicleId,startDate])
+}
+model OdometerLog {
+  id String @id @default(cuid())
+  vehicleId String
+  transactionId String?
+  reading Decimal @db.Decimal(14,2)
+  recordedAt DateTime
+  overrideReason String?
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  transaction FuelTransaction? @relation(fields:[transactionId],references:[id])
+  @@index([vehicleId,recordedAt])
+}
+model Purpose {
+  id String @id @default(cuid())
+  organizationId String
+  companyId String?
+  name String
+  category String
+  personalUse Boolean @default(false)
+  billable Boolean @default(false)
+  active Boolean @default(true)
+  organization Organization @relation(fields:[organizationId],references:[id])
+  company Company? @relation(fields:[companyId],references:[id])
+  transactions FuelTransaction[]
+  @@unique([organizationId,name])
+}
+model FuelTransaction {
+  id String @id @default(cuid())
+  organizationId String
+  transactionDate DateTime
+  invoiceNumber String?
+  poNumber String?
+  operatorId String?
+  companyId String?
+  vehicleId String?
+  purposeId String?
+  operatorOriginal String?
+  companyOriginal String?
+  vehicleOriginal String?
+  purposeOriginal String?
+  unitPrice Decimal @db.Decimal(12,4)
+  liters Decimal @db.Decimal(14,3)
+  amount Decimal @db.Decimal(14,2)
+  requestedAmount Decimal? @db.Decimal(14,2)
+  odometer Decimal? @db.Decimal(14,2)
+  notes String?
+  status TransactionStatus @default(DRAFT)
+  source TransactionSource @default(MANUAL)
+  overrideReason String?
+  sourceWorkbook String?
+  sourceSheet String?
+  sourceRow Int?
+  sourceValues Json?
+  fingerprint String? @db.VarChar(64)
+  importBatchId String?
+  createdById String
+  updatedById String?
+  approvedById String?
+  approvedAt DateTime?
+  deletedAt DateTime?
+  organization Organization @relation(fields:[organizationId],references:[id])
+  operator Operator? @relation(fields:[operatorId],references:[id])
+  company Company? @relation(fields:[companyId],references:[id])
+  vehicle Vehicle? @relation(fields:[vehicleId],references:[id])
+  purpose Purpose? @relation(fields:[purposeId],references:[id])
+  importBatch ImportBatch? @relation(fields:[importBatchId],references:[id])
+  createdBy User @relation("CreatedBy",fields:[createdById],references:[id])
+  updatedBy User? @relation("UpdatedBy",fields:[updatedById],references:[id])
+  approvedBy User? @relation("ApprovedBy",fields:[approvedById],references:[id])
+  approvals TransactionApproval[]
+  odometerLogs OdometerLog[]
+  payableLinks AccountPayableTransaction[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([organizationId,transactionDate])
+  @@index([companyId])
+  @@index([vehicleId])
+  @@index([operatorId])
+  @@index([status])
+  @@index([poNumber])
+  @@index([invoiceNumber])
+  @@index([importBatchId])
+  @@unique([organizationId,fingerprint])
+}
+model TransactionApproval {
+  id String @id @default(cuid())
+  transactionId String
+  userId String
+  action String
+  reason String?
+  transaction FuelTransaction @relation(fields:[transactionId],references:[id])
+  user User @relation(fields:[userId],references:[id])
+  createdAt DateTime @default(now())
+}
+model InsurancePolicy {
+  id String @id @default(cuid())
+  vehicleId String
+  registeredOwner String?
+  assignedDriver String?
+  insurer String
+  policyNumber String?
+  policyStart DateTime
+  policyEnd DateTime
+  premium Decimal? @db.Decimal(14,2)
+  status GeneralStatus @default(ACTIVE)
+  remarks String?
+  renewedFromId String?
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  attachments Attachment[]
+  @@index([policyEnd,status])
+}
+model AccountPayable {
+  id String @id @default(cuid())
+  chargedCompanyId String
+  paidByCompanyId String?
+  periodStart DateTime
+  periodEnd DateTime
+  amount Decimal @db.Decimal(14,2)
+  status GeneralStatus @default(DRAFT)
+  referenceNumber String?
+  remarks String?
+  chargedCompany Company @relation("ChargedCompany",fields:[chargedCompanyId],references:[id])
+  paidByCompany Company? @relation("PaidByCompany",fields:[paidByCompanyId],references:[id])
+  transactions AccountPayableTransaction[]
+  @@index([periodStart,periodEnd,status])
+}
+model AccountPayableTransaction {
+  accountPayableId String
+  transactionId String
+  accountPayable AccountPayable @relation(fields:[accountPayableId],references:[id])
+  transaction FuelTransaction @relation(fields:[transactionId],references:[id])
+  @@id([accountPayableId,transactionId])
+  @@unique([transactionId])
+}
+model ImportBatch {
+  id String @id @default(cuid())
+  organizationId String
+  uploadedById String
+  filename String
+  checksum String @db.VarChar(64)
+  status ImportStatus @default(UPLOADED)
+  dryRun Boolean @default(false)
+  totalRows Int @default(0)
+  validRows Int @default(0)
+  importedRows Int @default(0)
+  rejectedRows Int @default(0)
+  reconciliation Json?
+  organization Organization @relation(fields:[organizationId],references:[id])
+  uploadedBy User @relation(fields:[uploadedById],references:[id])
+  rows ImportRow[]
+  transactions FuelTransaction[]
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+  @@unique([organizationId,checksum])
+}
+model ImportRow {
+  id String @id @default(cuid())
+  batchId String
+  sheetName String
+  rowNumber Int
+  classification String
+  status ImportRowStatus @default(PENDING)
+  fingerprint String? @db.VarChar(64)
+  originalValues Json
+  normalizedValues Json?
+  reason String?
+  batch ImportBatch @relation(fields:[batchId],references:[id],onDelete:Cascade)
+  @@unique([batchId,sheetName,rowNumber])
+  @@index([status])
+}
+model AuditLog {
+  id String @id @default(cuid())
+  userId String?
+  action String
+  entityType String
+  entityId String?
+  beforeValue Json?
+  afterValue Json?
+  ipAddress String?
+  userAgent String?
+  user User? @relation(fields:[userId],references:[id])
+  createdAt DateTime @default(now())
+  @@index([entityType,entityId])
+  @@index([createdAt])
+}
+model Attachment {
+  id String @id @default(cuid())
+  policyId String?
+  filename String
+  storageKey String
+  mimeType String
+  size Int
+  policy InsurancePolicy? @relation(fields:[policyId],references:[id])
+  createdAt DateTime @default(now())
+}
+model AppSetting {
+  id String @id @default(cuid())
+  key String @unique
+  value Json
+  updatedAt DateTime @updatedAt
+}
+

@@ -1,0 +1,1 @@
+import {test,expect} from "@playwright/test";test("protected pages redirect to login",async({page})=>{await page.goto("/dashboard");await expect(page).toHaveURL(/login/);await expect(page.getByRole("heading",{name:"Fuel Monitoring System"})).toBeVisible()});

@@ -1,0 +1,2 @@
+import {PageHeading} from "./page-heading";
+export function EntityTable({title,description,headers,rows}:{title:string;description:string;headers:string[];rows:(string|number|React.ReactNode)[][]}){return <><PageHeading title={title} description={description}/><div className="card desktop-table"><table className="table"><thead><tr>{headers.map(x=><th key={x}>{x}</th>)}</tr></thead><tbody>{rows.map((r,i)=><tr key={i}>{r.map((v,j)=><td key={j}>{v}</td>)}</tr>)}</tbody></table>{!rows.length&&<p className="p-8 text-center text-slate-500">No records found.</p>}</div></>}

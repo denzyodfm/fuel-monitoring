@@ -1,0 +1,14 @@
+node_modules
+node_modules_incomplete
+.next
+.env
+uploads/*
+!uploads/.gitkeep
+coverage
+playwright-report
+test-results
+data/*.xlsx
+tmp/
+*.log
+dashboard-smoke.png
+tsconfig.tsbuildinfo
