@@ -1,3 +1,25 @@
-import { redirect } from "next/navigation"; import bcrypt from "bcryptjs"; import {createSession,getSession} from "@/lib/auth";
-async function login(formData:FormData){"use server";const email=String(formData.get("email")||"").toLowerCase();const password=String(formData.get("password")||"");if(process.env.LOCAL_PREVIEW_MODE==="true"&&email==="admin@fuel.local"&&password==="FuelAdmin2026!")redirect("/preview");const {db}=await import("@/lib/db");const user=await db.user.findUnique({where:{email}});if(!user||!user.active||!(await bcrypt.compare(password,user.passwordHash)))redirect("/login?error=Invalid+credentials");await db.auditLog.create({data:{userId:user.id,action:"LOGIN",entityType:"User",entityId:user.id}});await db.user.update({where:{id:user.id},data:{lastLoginAt:new Date()}});await createSession({userId:user.id,organizationId:user.organizationId,role:user.role,name:user.name});redirect("/dashboard")}
-export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}){if(await getSession())redirect("/dashboard");const q=await searchParams;return <main className="min-h-screen grid place-items-center p-6 bg-gradient-to-br from-slate-950 to-emerald-950"><form action={login} className="card w-full max-w-md p-8"><div className="w-12 h-12 rounded-xl bg-emerald-600 text-white grid place-items-center text-xl font-black">FM</div><h1 className="text-2xl font-bold mb-1">Fuel Monitoring System</h1><p className="text-slate-500 mb-6">Sign in to manage fuel operations.</p>{q.error&&<p className="bg-red-50 text-red-700 p-3 rounded-lg">{q.error}</p>}<label>Email<input className="field mt-1 mb-4" name="email" type="email" required defaultValue="admin@fuel.local"/></label><label>Password<input className="field mt-1 mb-6" name="password" type="password" required/></label><button className="btn w-full">Sign in</button></form></main>}
+import bcrypt from "bcryptjs";
+import {redirect} from "next/navigation";
+import {createSession,getSession} from "@/lib/auth";
+import {BrandFooter} from "@/components/brand-footer";
+import {getBranding} from "@/lib/branding";
+
+async function login(formData:FormData){"use server";const email=String(formData.get("email")||"").toLowerCase(),password=String(formData.get("password")||"");if(process.env.LOCAL_PREVIEW_MODE==="true"&&email==="admin@fuel.local"&&password==="FuelAdmin2026!")redirect("/preview");const {db}=await import("@/lib/db");const user=await db.user.findUnique({where:{email}});if(!user||!user.active||!(await bcrypt.compare(password,user.passwordHash)))redirect("/login?error=Invalid+credentials");await db.auditLog.create({data:{userId:user.id,action:"LOGIN",entityType:"User",entityId:user.id}});await db.user.update({where:{id:user.id},data:{lastLoginAt:new Date()}});await createSession({userId:user.id,organizationId:user.organizationId,role:user.role,name:user.name});redirect("/dashboard")}
+
+export default async function Login({searchParams}:{searchParams:Promise<{error?:string}>}){
+  if(await getSession())redirect("/dashboard");
+  const [branding,query]=await Promise.all([getBranding(),searchParams]);
+  return <main className="login-shell">
+    <section className="login-stage">
+      <form action={login} className="login-card">
+        <div className="login-brand"><img src="/brand/do-mark.png" alt="DO Plaza Holdings"/><div><span>DO PLAZA HOLDINGS</span><small>{branding.tagline}</small></div></div>
+        <div className="login-title"><h1>{branding.systemName}</h1><p>Sign in to manage your operations securely.</p></div>
+        {query.error&&<p className="login-error">{query.error}</p>}
+        <label>Email<input className="field" name="email" type="email" required autoComplete="username"/></label>
+        <label>Password<input className="field" name="password" type="password" required autoComplete="current-password"/></label>
+        <button className="btn login-submit">Sign in</button>
+      </form>
+    </section>
+    <BrandFooter className="login-footer"/>
+  </main>
+}
