@@ -17,7 +17,7 @@ services:
   app:
     build: .
     env_file: .env
-    ports: ["3000:3000"]
+    ports: ["3010:3010"]
     depends_on:
       db: {condition: service_healthy}
     volumes: ["./uploads:/app/uploads"]
