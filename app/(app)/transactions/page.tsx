@@ -2,7 +2,7 @@ import type {Prisma,TransactionStatus} from "@prisma/client";
 import Link from "next/link";
 import {db} from "@/lib/db";
 import {requireSession} from "@/lib/auth";
-import {php,liters} from "@/lib/format";
+import {php,liters,vehicleLabel} from "@/lib/format";
 import {PageHeading} from "@/components/page-heading";
 import {TransactionFilters} from "@/components/transaction-filters";
 import {EditTransactionModal} from "@/components/edit-transaction-modal";
@@ -26,7 +26,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Q>}){
     db.fuelTransaction.count({where}),db.vehicle.findMany({where:{organizationId:session.organizationId},orderBy:{plateNumber:"asc"}}),db.operator.findMany({where:{organizationId:session.organizationId},orderBy:{fullName:"asc"}}),db.company.findMany({where:{organizationId:session.organizationId,active:true},orderBy:{code:"asc"}}),db.purpose.findMany({where:{organizationId:session.organizationId,active:true},orderBy:{name:"asc"}}),
     db.fuelTransaction.groupBy({by:["companyId"],where,_sum:{liters:true,amount:true},orderBy:{_sum:{amount:"desc"}}}),db.fuelTransaction.groupBy({by:["vehicleId"],where,_sum:{liters:true,amount:true},orderBy:{_sum:{amount:"desc"}}}),db.fuelTransaction.groupBy({by:["operatorId"],where,_sum:{liters:true,amount:true},orderBy:{_sum:{amount:"desc"}}}),db.fuelTransaction.findMany({where,select:{companyId:true,vehicleId:true,operatorId:true,poNumber:true}})
   ]);
-  const vehicleOptions=vehicles.map(item=>({value:item.id,label:`${item.plateNumber}${item.assetName?` - ${item.assetName}`:""}`})),operatorOptions=operators.map(item=>({value:item.id,label:item.fullName})),companyOptions=companies.map(item=>({value:item.id,label:`${item.code} - ${item.name}`})),purposeOptions=purposes.map(item=>({value:item.id,label:item.name}));
+  const vehicleOptions=vehicles.map(item=>({value:item.id,label:vehicleLabel(item.plateNumber,item.assetName)})),operatorOptions=operators.map(item=>({value:item.id,label:item.fullName})),companyOptions=companies.map(item=>({value:item.id,label:`${item.code} - ${item.name}`})),purposeOptions=purposes.map(item=>({value:item.id,label:item.name}));
   const vehicleNames=new Map(vehicles.map(item=>[item.id,item.plateNumber])),operatorNames=new Map(operators.map(item=>[item.id,item.fullName])),companyNames=new Map(companies.map(item=>[item.id,item.code]));
   const poNumbersFor=(field:"companyId"|"vehicleId"|"operatorId",id:string|null)=>[...new Set(summaryTransactions.filter(transaction=>transaction[field]===id).map(transaction=>transaction.poNumber).filter((po):po is string=>Boolean(po)))].sort();
   const sections=[
