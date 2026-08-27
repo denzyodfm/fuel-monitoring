@@ -1,4 +1,4 @@
-﻿import type {Prisma,TransactionStatus} from "@prisma/client";
+import type {Prisma,TransactionStatus} from "@prisma/client";
 import Link from "next/link";
 import {db} from "@/lib/db";
 import {requireSession} from "@/lib/auth";

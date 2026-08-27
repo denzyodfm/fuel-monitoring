@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 import type {VehicleStatus} from "@prisma/client";import {db} from "@/lib/db";import {requireSession} from "@/lib/auth";import {revalidatePath} from "next/cache";
 type Kind="company"|"vehicle"|"operator"|"purpose";
 const value=(data:FormData,key:string)=>String(data.get(key)??"").trim();const optional=(data:FormData,key:string)=>value(data,key)||null;const checked=(data:FormData,key:string)=>data.get(key)==="on";
