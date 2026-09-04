@@ -899,18 +899,23 @@ html{scroll-behavior:smooth}
     <div>
       <span class="num">07</span>
       <p class="eyebrow">Oversight</p>
-      <h2>Watch policies and read the reports</h2>
+      <h2>Track cover and read the reports</h2>
       <div class="sec-body">
         <p class="sec-intro">
-          Both pages are read-only for every role. They answer questions; they do not change anything.
+          <b>Insurance</b> has two views. <b>All policies</b> is the flat list, soonest expiry first.
+          <b>By vehicle</b> groups every asset by what it is &mdash; vehicle, generator, engine,
+          equipment or property &mdash; and shows its current cover with the renewal history behind it.
         </p>
         <ol class="steps">
-          <li>Open <b>Insurance</b>. Policies are sorted by expiry date, soonest first, so the top of the table is always what needs attention.</li>
-          <li>Any policy whose end date has passed is marked <b>EXPIRED</b> regardless of its recorded status.</li>
+          <li>Select <b>Add policy</b>, choose the asset, then enter the insurer, policy number, start and end dates and the premium.</li>
+          <li>A policy is <b>Expiring soon</b> once it is within 90 days of its end date, and <b>Expired</b> after it. This is the same window the dashboard uses for its insurance alert card.</li>
+          <li>Use <b>Needs attention</b> to show only policies that are expiring or already expired.</li>
+          <li>Switch to <b>By vehicle</b> and select <b>History</b> on any asset to see its previous policies. Assets with no cover at all are listed too, marked <b>No policy recorded</b>.</li>
+          <li><b>Edit</b> corrects a policy; <b>Delete</b> asks you to type <kbd>DELETE</kbd> and is administrator-only. <b>Print</b> and <b>Download Excel</b> follow whichever view you are in.</li>
           <li>Open <b>Reports</b> for the monthly summary: month, company, litres, actual spend, requested amount, and the <b>Variance</b> between the last two.</li>
-          <li>The cards above the table name the standard reporting views your data supports &mdash; monthly and semi-monthly summaries, usage by company and vehicle, price-per-litre trend, requested against actual, and more.</li>
         </ol>
-        <p class="note">Insurance records are created directly in the database rather than through the application, so if a vehicle is missing here, ask an administrator to add its policy.</p>
+        <p class="note"><b>Renewing?</b> Add the new policy rather than editing the old one. The previous policy then moves into that asset's history, which is what gives you the renewal trail.</p>
+        <p class="note"><b>Categories are worked out from the asset name</b> when a vehicle has no <i>Vehicle type</i> set &mdash; a record called &ldquo;GENERATOR&rdquo; is filed under Generator. If something lands in the wrong group, set its <b>Vehicle type</b> on the Vehicles page and it moves.</p>
       </div>
     </div>
 
@@ -920,19 +925,22 @@ html{scroll-behavior:smooth}
           <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/insurance</span></div>
           <div class="win-body">
             <div class="mini-content" style="padding:13px">
-              <div class="ph"><div><h4>Insurance monitoring</h4><p>Policy expiry, renewal and attachment tracking.</p></div></div>
+              <div class="ph">
+                <div><h4>Insurance monitoring</h4><p><b>All policies</b> &middot; By vehicle</p></div>
+                <div class="acts"><button class="btn gh">Needs attention (1)</button><button class="btn">Add policy</button></div>
+              </div>
               <table class="mt">
-                <thead><tr><th>Vehicle</th><th>Insurer</th><th>Policy</th><th>Start</th><th>End</th><th class="num-c">Premium</th><th>Status</th></tr></thead>
+                <thead><tr><th>Vehicle</th><th>Category</th><th>Insurer</th><th>Policy</th><th>End</th><th class="num-c">Days left</th><th class="num-c">Premium</th><th>Status</th></tr></thead>
                 <tbody>
-                  <tr><td>HILUX LAR 6084</td><td>Malayan</td><td>MP-77410</td><td>3/1/2025</td><td>2/28/2026</td><td class="num-c">18,400.00</td><td><span class="pill dg">EXPIRED</span></td></tr>
-                  <tr><td>HILUX ZAF 7862</td><td>Pioneer</td><td>PN-20913</td><td>10/1/2025</td><td>9/30/2026</td><td class="num-c">21,750.00</td><td><span class="pill ok">ACTIVE</span></td></tr>
-                  <tr><td>ABC-1747</td><td>Standard</td><td>SD-11288</td><td>1/15/2026</td><td>1/14/2027</td><td class="num-c">16,900.00</td><td><span class="pill ok">ACTIVE</span></td></tr>
+                  <tr><td>HILUX LAR 6084</td><td><span class="pill">Vehicle</span></td><td>Malayan</td><td>MP-77410</td><td>2/28/2026</td><td class="num-c">188 overdue</td><td class="num-c">&#8369;18,400.00</td><td><span class="pill dg">Expired</span></td></tr>
+                  <tr><td>HILUX ZAF 7862</td><td><span class="pill">Vehicle</span></td><td>Pioneer</td><td>9/30/2026</td><td>9/30/2026</td><td class="num-c">26</td><td class="num-c">&#8369;21,750.00</td><td><span class="pill">Expiring soon</span></td></tr>
+                  <tr><td>GENERATOR</td><td><span class="pill">Generator</span></td><td>Standard</td><td>SD-11288</td><td>1/14/2027</td><td class="num-c">132</td><td class="num-c">&#8369;16,900.00</td><td><span class="pill ok">Active</span></td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        <p class="cap"><b>Screen J</b> &mdash; insurance, sorted by expiry so the most urgent policy is first.</p>
+        <p class="cap"><b>Screen J</b> &mdash; <b>All policies</b>. The <b>By vehicle</b> tab groups the same records by asset and adds the renewal history.</p>
       </div>
 
       <div>
