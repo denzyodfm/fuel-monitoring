@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<title>Fuel Monitoring Field Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  --ground:#ffffff;
+  --band:#f6f2ef;
+  --surface:#ffffff;
+  --ink:#1c1917;
+  --muted:#6f6560;
+  --faint:#948a84;
+  --line:#e4dcd7;
+  --line-soft:#efe8e3;
+  --deep:#4a1010;
+  --deep-ink:#f3e6e2;
+  --deep-muted:#c8a9a3;
+  --deep-line:#6b2320;
+  --accent:#b91c1c;
+  --accent-soft:#fdf0ee;
+  --gold:#b45309;
+  --good:#047857;
+  --shadow:0 1px 2px rgba(28,25,23,.05), 0 12px 32px -20px rgba(28,25,23,.35);
+  --shadow-win:0 2px 4px rgba(28,25,23,.04), 0 24px 56px -28px rgba(74,16,16,.42);
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#15110f;
+    --band:#1b1613;
+    --surface:#1e1815;
+    --ink:#ece6e2;
+    --muted:#a89e98;
+    --faint:#8b807a;
+    --line:#332a26;
+    --line-soft:#2a221e;
+    --deep:#2b0d0d;
+    --deep-ink:#f3e6e2;
+    --deep-muted:#c3a49e;
+    --deep-line:#5a201e;
+    --accent:#e57373;
+    --accent-soft:#2b1817;
+    --gold:#d99340;
+    --good:#34a780;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 32px -20px rgba(0,0,0,.8);
+    --shadow-win:0 2px 4px rgba(0,0,0,.4), 0 24px 56px -28px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#15110f;
+  --band:#1b1613;
+  --surface:#1e1815;
+  --ink:#ece6e2;
+  --muted:#a89e98;
+  --faint:#8b807a;
+  --line:#332a26;
+  --line-soft:#2a221e;
+  --deep:#2b0d0d;
+  --deep-ink:#f3e6e2;
+  --deep-muted:#c3a49e;
+  --deep-line:#5a201e;
+  --accent:#e57373;
+  --accent-soft:#2b1817;
+  --gold:#d99340;
+  --good:#34a780;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 32px -20px rgba(0,0,0,.8);
+  --shadow-win:0 2px 4px rgba(0,0,0,.4), 0 24px 56px -28px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:Fraunces,Georgia,"Times New Roman",serif;font-weight:600;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin:0;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+
+/* ---------- hero ---------- */
+.hero{background:var(--deep);color:var(--deep-ink);padding:76px 0 68px}
+.hero .eyebrow{color:var(--deep-muted)}
+.hero h1{
+  font-size:clamp(2.6rem,6vw,4.3rem);line-height:1.02;letter-spacing:-.022em;
+  margin:16px 0 0;max-width:15ch;color:#fff;
+}
+.hero-foot{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end;justify-content:space-between;margin-top:26px}
+.hero-lede{color:var(--deep-muted);max-width:52ch;font-size:.97rem;line-height:1.62}
+.hero-lede strong{color:#f0dcd8;font-weight:600}
+.print-btn{
+  font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  background:#fff;color:var(--deep);border:0;padding:11px 20px;border-radius:7px;cursor:pointer;
+  white-space:nowrap;transition:transform .15s ease, box-shadow .15s ease;
+}
+.print-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+
+/* ---------- chip nav ---------- */
+.chipbar{
+  position:sticky;top:0;z-index:20;background:var(--ground);
+  border-bottom:1px solid var(--line);
+}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:13px 0;scrollbar-width:thin}
+.chip{
+  flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.04em;
+  color:var(--muted);text-decoration:none;background:var(--band);
+  border:1px solid var(--line-soft);border-radius:999px;padding:6px 13px;
+  transition:color .15s ease, border-color .15s ease;
+}
+.chip:hover{color:var(--accent);border-color:var(--accent)}
+.chip b{color:var(--accent);font-weight:600;margin-right:5px}
+
+/* ---------- sections ---------- */
+.sec{padding:74px 0;border-bottom:1px solid var(--line-soft)}
+.sec.alt{background:var(--band)}
+.sec-grid{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:60px;align-items:start}
+.num{
+  font-family:Fraunces,Georgia,serif;font-size:2.5rem;line-height:1;color:var(--accent);
+  font-weight:400;font-variant-numeric:lining-nums;margin-bottom:22px;display:block;
+}
+.sec h2{font-size:clamp(1.75rem,3.1vw,2.4rem);line-height:1.08;letter-spacing:-.018em;margin:7px 0 0}
+.sec-body{margin-top:22px;display:flex;flex-direction:column;gap:20px}
+.sec-intro{color:var(--muted);font-size:.95rem;max-width:56ch}
+
+ol.steps{margin:0;padding:0 0 0 1.35em;display:flex;flex-direction:column;gap:11px}
+ol.steps li{padding-left:5px;font-size:.93rem;line-height:1.58}
+ol.steps li::marker{color:var(--accent);font-family:"IBM Plex Mono",monospace;font-size:.8rem}
+ol.steps b{font-weight:600}
+kbd{
+  font-family:"IBM Plex Mono",monospace;font-size:.82em;background:var(--accent-soft);
+  color:var(--accent);border:1px solid var(--line);border-radius:5px;padding:1px 6px;white-space:nowrap;
+}
+.note{
+  border-left:3px solid var(--gold);background:var(--surface);
+  padding:13px 17px;font-size:.86rem;color:var(--muted);line-height:1.55;
+  border-radius:0 8px 8px 0;box-shadow:var(--shadow);
+}
+.note b{color:var(--ink);font-weight:600}
+.note.warn{border-left-color:var(--accent)}
+
+.stack{display:flex;flex-direction:column;gap:26px;min-width:0}
+
+/* ---------- browser window mockups ---------- */
+.win{
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;
+  background:var(--surface);box-shadow:var(--shadow-win);
+}
+.win-bar{
+  display:flex;align-items:center;gap:8px;padding:8px 13px;
+  background:var(--band);border-bottom:1px solid var(--line);
+}
+.sec.alt .win-bar{background:var(--surface)}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block}
+.dots i:first-child{background:#e0837c}
+.win-url{
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--faint);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.win-body{overflow-x:auto}
+
+/* miniature of the real app shell */
+.mini{display:flex;min-width:520px;font-size:.6rem;background:var(--surface)}
+.mini-side{
+  width:118px;flex:0 0 118px;background:#0f1420;color:#a9b2c0;padding:9px 8px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.mini-brand{display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid #1e2636}
+.mark{
+  width:19px;height:19px;border-radius:50%;background:#fff;color:#7f1d1d;
+  font-family:Fraunces,serif;font-weight:700;font-size:.54rem;
+  display:grid;place-items:center;flex:0 0 19px;letter-spacing:-.03em;
+}
+.mini-brand div{line-height:1.25;min-width:0}
+.mini-brand strong{color:#fff;font-size:.62rem;display:block}
+.mini-brand small{color:#6f7a8c;font-size:.5rem}
+.mini-nav{display:flex;flex-direction:column;gap:1px}
+.mini-nav span{
+  padding:3.5px 7px;border-radius:5px;display:flex;align-items:center;gap:6px;
+  color:#98a2b3;white-space:nowrap;
+}
+.mini-nav span::before{content:"";width:8px;height:8px;border-radius:2px;border:1.4px solid #4a5568;flex:0 0 8px}
+.mini-nav span.on{background:#7f1d1d;color:#fff}
+.mini-nav span.on::before{border-color:#f0b6b6;background:#f0b6b6}
+.mini-nav span.adm::before{border-style:dashed}
+.mini-main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--surface)}
+.mini-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:7px 11px;border-bottom:1px solid var(--line);background:var(--surface);
+}
+.mini-head .hb{display:flex;align-items:center;gap:6px}
+.mini-head .hb strong{font-size:.63rem;color:var(--ink);display:block;line-height:1.2}
+.mini-head .hb small{font-size:.5rem;color:var(--faint)}
+.mini-head .who{font-size:.53rem;color:var(--muted);white-space:nowrap}
+.mark.sm{width:16px;height:16px;flex:0 0 16px;font-size:.46rem;background:var(--accent);color:#fff}
+.mini-content{padding:11px;display:flex;flex-direction:column;gap:9px}
+
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.ph h4{font-size:.86rem;font-weight:600;letter-spacing:-.01em}
+.ph p{font-size:.55rem;color:var(--faint);margin-top:1px}
+
+.btn{
+  font-size:.55rem;font-family:"IBM Plex Sans",sans-serif;font-weight:500;
+  background:var(--accent);color:#fff;border:0;border-radius:5px;padding:4px 9px;white-space:nowrap;
+}
+.btn.sec2{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.btn.dg{background:#c62828}
+.btn.gh{background:transparent;color:var(--muted);border:1px solid var(--line)}
+
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.kpi{border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:var(--surface);min-width:0}
+.kpi span{font-size:.5rem;color:var(--faint);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi strong{
+  font-size:.78rem;display:block;margin-top:2px;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+}
+.kpi.hi strong{color:var(--accent)}
+
+.panel{border:1px solid var(--line);border-radius:7px;padding:8px;background:var(--surface);min-width:0}
+.panel h5{font-size:.6rem;font-weight:600;margin:0 0 6px}
+
+table.mt{width:100%;border-collapse:collapse;font-size:.55rem}
+table.mt th{
+  text-align:left;font-weight:600;color:var(--faint);font-size:.5rem;
+  text-transform:uppercase;letter-spacing:.05em;padding:4px 5px;border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+table.mt td{padding:4.5px 5px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+table.mt tr:last-child td{border-bottom:0}
+table.mt .num-c{text-align:right;font-variant-numeric:tabular-nums;font-family:"IBM Plex Mono",monospace}
+table.mt tfoot td{font-weight:600;border-top:1.5px solid var(--line);border-bottom:0;background:var(--band)}
+.acts{display:flex;gap:3px}
+
+.pill{
+  font-size:.46rem;padding:1.5px 6px;border-radius:999px;border:1px solid var(--line);
+  color:var(--muted);white-space:nowrap;display:inline-block;
+}
+.pill.ok{color:var(--good);border-color:var(--good)}
+.pill.dg{color:var(--accent);border-color:var(--accent)}
+
+.filters{display:flex;gap:5px;flex-wrap:wrap;align-items:flex-end;padding:8px;border:1px solid var(--line);border-radius:7px}
+.fld{display:flex;flex-direction:column;gap:2px;min-width:0}
+.fld span{font-size:.47rem;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.fld i{
+  display:block;border:1px solid var(--line);border-radius:4px;padding:3px 6px;
+  font-style:normal;font-size:.53rem;color:var(--ink);background:var(--surface);min-width:56px;
+}
+.fld i.ph2{color:var(--faint)}
+
+.form2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.form2 .fld i{min-width:0}
+.req{color:var(--accent)}
+
+/* login mock */
+.login{
+  min-height:210px;display:grid;place-items:center;padding:22px;
+  background:linear-gradient(160deg,var(--band),var(--surface));
+}
+.login-card{
+  width:100%;max-width:260px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:9px;box-shadow:var(--shadow);
+}
+.login-card .lb{display:flex;align-items:center;gap:7px;padding-bottom:9px;border-bottom:1px solid var(--line-soft)}
+.login-card .lb strong{font-size:.62rem;letter-spacing:.06em}
+.login-card .lb small{display:block;font-size:.5rem;color:var(--faint)}
+.login-card h5{font-family:Fraunces,serif;font-size:.9rem;font-weight:600;margin:0}
+
+/* modal mock */
+.modal{
+  position:relative;background:var(--surface);border:1px solid var(--line);border-radius:9px;
+  padding:11px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);
+}
+.modal-h{display:flex;justify-content:space-between;align-items:flex-start;gap:9px;border-bottom:1px solid var(--line-soft);padding-bottom:7px}
+.modal-h h5{font-family:Fraunces,serif;font-size:.78rem;font-weight:600;margin:0}
+.modal-h p{font-size:.52rem;color:var(--faint);margin-top:2px}
+.x{font-size:.75rem;color:var(--faint);line-height:1}
+.scrim{background:var(--band);padding:13px;border-radius:9px}
+
+/* chart mocks */
+.chartbox{height:74px;width:100%}
+.legend{display:flex;gap:9px;font-size:.48rem;color:var(--faint);margin-top:4px}
+.legend b{display:inline-flex;align-items:center;gap:3px;font-weight:400}
+.legend i{width:7px;height:2.5px;display:block;border-radius:2px}
+
+/* caption */
+.cap{
+  font-family:"IBM Plex Mono",monospace;font-size:.63rem;color:var(--faint);
+  letter-spacing:.02em;margin-top:9px;padding-left:2px;
+}
+.cap b{color:var(--muted);font-weight:500}
+
+/* role matrix */
+.matrix{margin-top:8px;border:1px solid var(--line);border-radius:var(--radius);overflow-x:auto;background:var(--surface);box-shadow:var(--shadow)}
+table.roles{width:100%;border-collapse:collapse;font-size:.84rem;min-width:540px}
+table.roles th,table.roles td{padding:11px 15px;text-align:left;border-bottom:1px solid var(--line-soft)}
+table.roles thead th{
+  font-family:"IBM Plex Mono",monospace;font-size:.62rem;text-transform:uppercase;
+  letter-spacing:.11em;color:var(--faint);font-weight:500;background:var(--band);
+}
+table.roles tbody tr:last-child td{border-bottom:0}
+table.roles td:first-child{font-weight:500}
+table.roles .y{color:var(--good);font-weight:600}
+table.roles .n{color:var(--faint)}
+
+/* closing */
+.end{padding:64px 0 76px;background:var(--deep);color:var(--deep-ink)}
+.end h2{color:#fff;font-size:clamp(1.5rem,3vw,2.1rem);max-width:20ch}
+.end .eyebrow{color:var(--deep-muted)}
+.end-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:26px;margin-top:34px}
+.end-grid div{border-top:1px solid var(--deep-line);padding-top:14px}
+.end-grid h6{
+  font-family:"IBM Plex Mono",monospace;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;
+  color:#fff;margin:0 0 6px;font-weight:500;
+}
+.end-grid p{font-size:.85rem;color:var(--deep-muted);line-height:1.55}
+.end-grid code{font-family:"IBM Plex Mono",monospace;font-size:.92em;color:#f0c9c4}
+
+@media (max-width:900px){
+  .sec-grid{grid-template-columns:1fr;gap:34px}
+  .wrap{padding:0 20px}
+  .hero{padding:52px 0 46px}
+  .sec{padding:52px 0}
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+html{scroll-behavior:smooth}
+
+@media print{
+  .chipbar,.print-btn{display:none}
+  .sec{page-break-inside:avoid;border-bottom:1px solid #ddd;padding:26px 0}
+  .hero,.end{background:#fff;color:#111}
+  .hero h1,.end h2{color:#111}
+  .hero-lede,.end-grid p,.end .eyebrow,.hero .eyebrow{color:#555}
+  .win{box-shadow:none}
+  body{font-size:11pt}
+}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">DO Plaza Holdings &middot; Visual manual</p>
+    <h1>Every litre, accounted for.</h1>
+    <div class="hero-foot">
+      <p class="hero-lede">
+        Follow the numbered path in each section. The screen beside it shows exactly what you should
+        be looking at. Everything you save is live immediately &mdash; there is no draft copy of the
+        database. Amounts are computed by the system as <strong>unit price &times; litres</strong>,
+        never typed by hand.
+      </p>
+      <button class="print-btn" onclick="window.print()">Print this manual</button>
+    </div>
+  </div>
+</header>
+
+<nav class="chipbar" aria-label="Sections">
+  <div class="wrap chips">
+    <a class="chip" href="#access"><b>01</b>Access</a>
+    <a class="chip" href="#dashboard"><b>02</b>Dashboard</a>
+    <a class="chip" href="#record"><b>03</b>Record</a>
+    <a class="chip" href="#find"><b>04</b>Find &amp; export</a>
+    <a class="chip" href="#correct"><b>05</b>Correct</a>
+    <a class="chip" href="#reference"><b>06</b>Reference data</a>
+    <a class="chip" href="#monitor"><b>07</b>Monitor</a>
+    <a class="chip" href="#admin"><b>08</b>Settings</a>
+  </div>
+</nav>
+
+<!-- ============ 01 ACCESS ============ -->
+<section class="sec" id="access">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">01</span>
+      <p class="eyebrow">Access</p>
+      <h2>Sign in and hold your session</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          The system is reached on port <b>3010</b>. Every page except the sign-in screen requires a
+          session, so an expired session sends you back here rather than showing an error.
+        </p>
+        <ol class="steps">
+          <li>Open <kbd>http://192.168.4.200:3010</kbd> from any machine on the office network. You land on the sign-in screen automatically.</li>
+          <li>Enter your <b>email address</b> and <b>password</b>. Both were issued by an administrator.</li>
+          <li>Select <b>Sign in</b>. You arrive on the dashboard, and the sidebar shows only the areas your role can reach.</li>
+          <li>To change your own password, open <b>Settings</b> in the sidebar and stay on the <b>Account</b> tab. Staff, approvers and viewers must confirm their existing password first; administrators are not asked for it.</li>
+          <li>To finish, use the <b>sign-out button</b> at the top right of the header.</li>
+        </ol>
+        <p class="note"><b>A session lasts eight hours.</b> After that you are returned to the sign-in screen and simply log in again &mdash; nothing you saved is affected. Wrong credentials return the message &ldquo;Invalid credentials&rdquo; without saying which field was wrong.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/login</span></div>
+          <div class="win-body">
+            <div class="login">
+              <div class="login-card">
+                <div class="lb"><span class="mark">DO</span><div><strong>DO PLAZA HOLDINGS</strong><small>Fuel operations management</small></div></div>
+                <h5>Fuel Monitoring System</h5>
+                <div class="fld"><span>Email</span><i>dennis.dizon@doplaza.ph</i></div>
+                <div class="fld"><span>Password</span><i class="ph2">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</i></div>
+                <div><button class="btn">Sign in</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen A</b> &mdash; the sign-in page at <kbd>/login</kbd>.</p>
+      </div>
+
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">Change password</span></div>
+          <div class="win-body scrim">
+            <div class="modal">
+              <div class="modal-h">
+                <div><h5>Change password</h5><p>Use at least eight characters.</p></div><span class="x">&times;</span>
+              </div>
+              <div class="fld"><span>Existing password</span><i class="ph2">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</i></div>
+              <div class="fld"><span>New password</span><i class="ph2">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</i></div>
+              <div class="fld"><span>Confirm new password</span><i class="ph2">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</i></div>
+              <div class="acts"><button class="btn">Change password</button><button class="btn gh">Cancel</button></div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen B</b> &mdash; <b>Change password</b>, opened from <b>Settings &rsaquo; Account</b>.</p>
+      </div>
+
+      <div>
+        <p class="eyebrow" style="margin-bottom:9px">Who can do what</p>
+        <div class="matrix">
+          <table class="roles">
+            <thead><tr><th>Task</th><th>Administrator</th><th>Staff</th><th>Approver</th><th>Viewer</th></tr></thead>
+            <tbody>
+              <tr><td>View pages &amp; reports</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="y">Yes</td></tr>
+              <tr><td>Add &amp; edit transactions</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td></tr>
+              <tr><td>Add &amp; edit reference data</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td></tr>
+              <tr><td>Delete anything</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
+              <tr><td>Branding, users, audit log</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cap">Deleting is restricted to administrators. Other roles may see a <b>Delete</b> button but the system refuses the action.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 DASHBOARD ============ -->
+<section class="sec alt" id="dashboard">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">02</span>
+      <p class="eyebrow">Orientation</p>
+      <h2>Read the operation at a glance</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          The dashboard is the landing page for every role. It totals your whole organisation &mdash;
+          it is not filtered, and it excludes deleted records.
+        </p>
+        <ol class="steps">
+          <li>The <b>seven cards</b> read left to right: total fuel expense, fuel volume, transaction count, average price per litre, pending approvals, active vehicles, and insurance alerts.</li>
+          <li><b>Insurance alerts</b> counts policies expiring within the next 90 days. Anything above zero is worth opening the Insurance page for.</li>
+          <li><b>Monthly expense and litres</b> plots every month on record. Expense follows the left scale in pesos; litres are drawn on the same axis as a flat comparison line.</li>
+          <li><b>Expense by company</b> ranks your top eight charging entities by total amount.</li>
+          <li><b>Recent transactions</b> lists the six newest records. Administrators and staff get <b>Edit</b> and <b>Delete</b> directly from this table.</li>
+        </ol>
+        <p class="note"><b>Pending approvals</b> counts records with the status <i>Submitted</i>. The approval workflow is recorded in the database, but there are no approve or reject buttons in the current release &mdash; treat this card as a count to watch, not a queue to clear.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/dashboard</span></div>
+          <div class="win-body">
+            <div class="mini">
+              <div class="mini-side">
+                <div class="mini-brand"><span class="mark">DO</span><div><strong>Fuel Monitoring</strong><small>DO Plaza Holdings</small></div></div>
+                <div class="mini-nav">
+                  <span class="on">Dashboard</span><span>Transactions</span><span>Companies</span>
+                  <span>Vehicles</span><span>Operators</span><span>Purposes</span>
+                  <span>Insurance</span><span>Reports</span><span class="adm">Settings</span>
+                  <span>User manual</span>
+                </div>
+              </div>
+              <div class="mini-main">
+                <div class="mini-head">
+                  <div class="hb"><span class="mark sm">DO</span><div><strong>Fuel Monitoring System</strong><small>DO Plaza Holdings &middot; Asia/Manila &middot; Philippine Peso</small></div></div>
+                  <span class="who">DENNIS A. DIZON &mdash; ADMINISTRATOR</span>
+                </div>
+                <div class="mini-content">
+                  <div class="ph"><div><h4>Operations dashboard</h4></div></div>
+                  <div class="cards">
+                    <div class="kpi"><span>Total fuel expense</span><strong>&#8369;359,330.27</strong></div>
+                    <div class="kpi"><span>Fuel volume</span><strong>6,309.12 L</strong></div>
+                    <div class="kpi"><span>Transactions</span><strong>247</strong></div>
+                    <div class="kpi"><span>Average price / L</span><strong>&#8369;63.48</strong></div>
+                  </div>
+                  <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+                    <div class="kpi hi"><span>Pending approvals</span><strong>0</strong></div>
+                    <div class="kpi"><span>Active vehicles</span><strong>39</strong></div>
+                    <div class="kpi hi"><span>Insurance alerts</span><strong>0</strong></div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                    <div class="panel">
+                      <h5>Monthly expense and litres</h5>
+                      <svg class="chartbox" viewBox="0 0 200 74" preserveAspectRatio="none" role="img" aria-label="Area chart of monthly expense trending down from January to August">
+                        <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stop-color="#dc2626" stop-opacity=".32"/>
+                          <stop offset="95%" stop-color="#f59e0b" stop-opacity="0"/>
+                        </linearGradient></defs>
+                        <g stroke="currentColor" stroke-opacity=".12" stroke-dasharray="2 3">
+                          <line x1="0" y1="18" x2="200" y2="18"/><line x1="0" y1="36" x2="200" y2="36"/><line x1="0" y1="54" x2="200" y2="54"/>
+                        </g>
+                        <path d="M0,20 L28,30 L57,34 L86,42 L114,36 L143,44 L171,28 L200,60 L200,74 L0,74 Z" fill="url(#ga)"/>
+                        <path d="M0,20 L28,30 L57,34 L86,42 L114,36 L143,44 L171,28 L200,60" fill="none" stroke="#b91c1c" stroke-width="1.6"/>
+                        <path d="M0,70 L28,70 L57,69 L86,71 L114,70 L143,71 L171,69 L200,72" fill="none" stroke="#d97706" stroke-width="1.2"/>
+                      </svg>
+                      <div class="legend"><b><i style="background:#b91c1c"></i>expense</b><b><i style="background:#d97706"></i>litres</b></div>
+                    </div>
+                    <div class="panel">
+                      <h5>Expense by company</h5>
+                      <svg class="chartbox" viewBox="0 0 200 74" preserveAspectRatio="none" role="img" aria-label="Bar chart ranking companies by expense, DOPHC highest">
+                        <g stroke="currentColor" stroke-opacity=".12" stroke-dasharray="2 3">
+                          <line x1="0" y1="18" x2="200" y2="18"/><line x1="0" y1="36" x2="200" y2="36"/><line x1="0" y1="54" x2="200" y2="54"/>
+                        </g>
+                        <g fill="#b91c1c">
+                          <rect x="6" y="6" width="24" height="68" rx="2"/><rect x="38" y="30" width="24" height="44" rx="2"/>
+                          <rect x="70" y="35" width="24" height="39" rx="2"/><rect x="102" y="48" width="24" height="26" rx="2"/>
+                          <rect x="134" y="55" width="24" height="19" rx="2"/><rect x="166" y="57" width="24" height="17" rx="2"/>
+                        </g>
+                      </svg>
+                      <div class="legend"><b>DOPHC</b><b>KAP</b><b>ABDC</b><b>VRI</b><b>COSTA</b><b>GPOWER</b></div>
+                    </div>
+                  </div>
+                  <div class="panel">
+                    <h5>Recent transactions</h5>
+                    <table class="mt">
+                      <thead><tr><th>Date</th><th>P.O.</th><th>Company</th><th>Vehicle</th><th>Driver / Operator</th><th class="num-c">Price/L</th><th class="num-c">Litres</th><th class="num-c">Amount</th><th>Action</th></tr></thead>
+                      <tbody>
+                        <tr><td>8/15/2026</td><td>20260134</td><td>COSTA</td><td>HILUX ZAF 7862</td><td>HAROLD A. BOISER</td><td class="num-c">&#8369;79.60</td><td class="num-c">20.00</td><td class="num-c">&#8369;1,592.00</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                        <tr><td>8/12/2026</td><td>20260131</td><td>ABDC</td><td>KER-734</td><td>RAYMUND B. BERNADOS</td><td class="num-c">&#8369;79.70</td><td class="num-c">40.00</td><td class="num-c">&#8369;3,188.00</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                        <tr><td>8/11/2026</td><td>20260130</td><td>DOPHC</td><td>HILUX LAR 6084</td><td>JONAS BALEROSO</td><td class="num-c">&#8369;79.70</td><td class="num-c">10.00</td><td class="num-c">&#8369;797.00</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen C</b> &mdash; the dashboard. Items marked with a dashed square in the sidebar are visible to administrators only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 RECORD ============ -->
+<section class="sec" id="record">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">03</span>
+      <p class="eyebrow">Daily work</p>
+      <h2>Record a fuel purchase</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          Administrators and staff can create records. The four fields marked
+          <span class="req">&bull;</span> are required; everything else can be filled in later
+          through <b>Edit</b>.
+        </p>
+        <ol class="steps">
+          <li>Open <b>Transactions</b> in the sidebar, then select <b>Add transaction</b> at the top right.</li>
+          <li>Set the <b>Date</b> <span class="req">&bull;</span> of the purchase and choose the <b>Company</b> <span class="req">&bull;</span> being charged.</li>
+          <li>Enter the <b>P.O. number</b> and <b>Invoice number</b> from the slip. Both are free text, so keep your numbering consistent &mdash; searches match on them.</li>
+          <li>Pick the <b>Vehicle</b>, <b>Operator</b> and <b>Purpose</b>. Only active operators and purposes appear in these lists.</li>
+          <li>Enter <b>Unit price</b> <span class="req">&bull;</span> in pesos per litre and <b>Litres</b> <span class="req">&bull;</span>. Do not enter the total &mdash; the system multiplies these two for you.</li>
+          <li>Add the <b>Odometer</b> reading if the vehicle requires one, and <b>Requested amount</b> if the driver asked for a different figure than what was actually pumped.</li>
+          <li>Select <b>Create transaction</b>. You return to the transaction list with the new record at the top.</li>
+        </ol>
+        <p class="note"><b>Requested versus actual.</b> The <i>Requested amount</i> is what was asked for; the computed <i>Amount</i> is what was really dispensed. The Reports page subtracts one from the other and shows the difference as <i>Variance</i>, so filling this in is what makes that column meaningful.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/transactions &rsaquo; Add transaction</span></div>
+          <div class="win-body scrim">
+            <div class="modal">
+              <div class="modal-h">
+                <div><h5>New fuel transaction</h5><p>Amount is computed precisely from unit price &times; litres.</p></div><span class="x">&times;</span>
+              </div>
+              <div class="form2">
+                <div class="fld"><span>Date <b class="req">&bull;</b></span><i>2026-08-15</i></div>
+                <div class="fld"><span>Company <b class="req">&bull;</b></span><i>COSTA &mdash; Costa Ventures</i></div>
+                <div class="fld"><span>P.O. number</span><i>20260134</i></div>
+                <div class="fld"><span>Invoice number</span><i>INV-88214</i></div>
+                <div class="fld"><span>Vehicle</span><i>HILUX ZAF 7862</i></div>
+                <div class="fld"><span>Operator</span><i>HAROLD A. BOISER</i></div>
+                <div class="fld"><span>Purpose</span><i>Field operations</i></div>
+                <div class="fld"><span>Odometer</span><i>84,120</i></div>
+                <div class="fld"><span>Unit price (PHP/L) <b class="req">&bull;</b></span><i>79.60</i></div>
+                <div class="fld"><span>Litres <b class="req">&bull;</b></span><i>20.000</i></div>
+                <div class="fld"><span>Requested amount</span><i>1,600.00</i></div>
+                <div class="fld"><span>Notes</span><i class="ph2">Optional remarks</i></div>
+              </div>
+              <div class="panel" style="display:flex;justify-content:space-between;align-items:center;background:var(--accent-soft);border-color:var(--accent)">
+                <span style="font-size:.55rem;color:var(--muted)">Computed amount &mdash; 79.60 &times; 20.000</span>
+                <strong style="font-size:.8rem;font-family:'IBM Plex Mono',monospace">&#8369;1,592.00</strong>
+              </div>
+              <div><button class="btn">Create transaction</button></div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen D</b> &mdash; the new-transaction form. The amount panel is calculated, never typed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 FIND ============ -->
+<section class="sec alt" id="find">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">04</span>
+      <p class="eyebrow">Retrieval</p>
+      <h2>Filter, summarise and export</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          The transaction list holds 25 records per page. Every filter narrows the table, the totals
+          row, the summaries and the exports together &mdash; so whatever you export is exactly what
+          you are looking at.
+        </p>
+        <ol class="steps">
+          <li>Type in <b>Search</b> to match a P.O. number, invoice number, plate number, asset name or driver name.</li>
+          <li>Narrow further with <b>Vehicle</b>, <b>Driver / operator</b>, a <b>From</b> and <b>To</b> date range, and <b>Status</b>.</li>
+          <li>Select <b>Filter</b> to apply, or <b>Clear</b> to return to the full list.</li>
+          <li>Read the <b>Filtered totals</b> row at the foot of the table &mdash; it totals litres and pesos across every matching record, not just the visible page.</li>
+          <li>Select <b>View summaries</b> for subtotals grouped by company, by vehicle and by driver, each listing the P.O. numbers involved. From there you can <b>Download PDF</b> or <b>Print</b>.</li>
+          <li>Use <b>Download Excel</b> for the filtered rows as a spreadsheet, or <b>Print</b> for a clean printed copy with the filters recorded at the top.</li>
+          <li>Move through pages with <b>Previous</b> and <b>Next</b> beneath the table.</li>
+        </ol>
+        <p class="note"><b>Status</b> offers Draft, Submitted, Approved, Rejected and Locked. Records created in the app start as drafts and stay there, so this filter is most useful for data brought in from earlier systems.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/transactions</span></div>
+          <div class="win-body">
+            <div class="mini">
+              <div class="mini-side">
+                <div class="mini-brand"><span class="mark">DO</span><div><strong>Fuel Monitoring</strong><small>DO Plaza Holdings</small></div></div>
+                <div class="mini-nav">
+                  <span>Dashboard</span><span class="on">Transactions</span><span>Companies</span>
+                  <span>Vehicles</span><span>Operators</span><span>Purposes</span><span>Insurance</span><span>Reports</span><span class="adm">Settings</span>
+                </div>
+              </div>
+              <div class="mini-main">
+                <div class="mini-head">
+                  <div class="hb"><span class="mark sm">DO</span><div><strong>Fuel Monitoring System</strong><small>DO Plaza Holdings &middot; Asia/Manila</small></div></div>
+                  <span class="who">DENNIS A. DIZON &mdash; ADMINISTRATOR</span>
+                </div>
+                <div class="mini-content">
+                  <div class="ph">
+                    <div><h4>Fuel transactions</h4><p>247 normalized operational records</p></div>
+                    <div class="acts"><button class="btn sec2">View summaries</button><button class="btn">Add transaction</button></div>
+                  </div>
+                  <div class="filters">
+                    <div class="fld"><span>Search</span><i class="ph2">P.O. / plate / driver</i></div>
+                    <div class="fld"><span>Vehicle</span><i>All vehicles</i></div>
+                    <div class="fld"><span>Driver / operator</span><i>All operators</i></div>
+                    <div class="fld"><span>From</span><i>2026-08-01</i></div>
+                    <div class="fld"><span>To</span><i>2026-08-31</i></div>
+                    <div class="fld"><span>Status</span><i>All statuses</i></div>
+                    <div class="acts"><button class="btn">Filter</button><button class="btn gh">Clear</button><button class="btn gh">Print</button><button class="btn gh">Download Excel</button></div>
+                  </div>
+                  <table class="mt">
+                    <thead><tr><th>Date</th><th>P.O. Number</th><th>Company</th><th>Vehicle</th><th>Driver / Operator</th><th class="num-c">Price / L</th><th class="num-c">Litres</th><th class="num-c">Amount</th><th>Action</th></tr></thead>
+                    <tbody>
+                      <tr><td>8/15/2026</td><td>20260134</td><td>COSTA</td><td>HILUX ZAF 7862</td><td>HAROLD A. BOISER</td><td class="num-c">&#8369;79.60</td><td class="num-c">20.00 L</td><td class="num-c">&#8369;1,592.00</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      <tr><td>8/12/2026</td><td>20260131</td><td>ABDC</td><td>KER-734</td><td>RAYMUND B. BERNADOS</td><td class="num-c">&#8369;79.70</td><td class="num-c">40.00 L</td><td class="num-c">&#8369;3,188.00</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      <tr><td>8/11/2026</td><td>20260130</td><td>DOPHC</td><td>HILUX LAR 6084</td><td>JONAS BALEROSO</td><td class="num-c">&#8369;79.70</td><td class="num-c">10.00 L</td><td class="num-c">&#8369;797.00</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      <tr><td>8/08/2026</td><td>20260128</td><td>VRI</td><td>GENERATOR</td><td>&mdash;</td><td class="num-c">&#8369;78.90</td><td class="num-c">55.00 L</td><td class="num-c">&#8369;4,339.50</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                    </tbody>
+                    <tfoot><tr><td colspan="6">Filtered totals (18 records)</td><td class="num-c">421.00 L</td><td class="num-c">&#8369;33,458.90</td><td></td></tr></tfoot>
+                  </table>
+                  <div class="acts" style="align-items:center"><button class="btn gh">Previous</button><span style="font-size:.53rem;color:var(--faint)">Page 1 of 10</span><button class="btn gh">Next</button></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen E</b> &mdash; filters, the results table, and the filtered totals row.</p>
+      </div>
+
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">View summaries</span></div>
+          <div class="win-body scrim">
+            <div class="modal">
+              <div class="modal-h">
+                <div><h5>Fuel transaction summaries</h5><p>Filters applied &middot; 1&ndash;31 August 2026 &middot; All vehicles</p></div><span class="x">&times;</span>
+              </div>
+              <div class="panel">
+                <h5>Summary by company</h5>
+                <table class="mt">
+                  <thead><tr><th>Company</th><th>P.O. numbers</th><th class="num-c">Litres</th><th class="num-c">Amount</th></tr></thead>
+                  <tbody>
+                    <tr><td>DOPHC</td><td>20260130, 20260133</td><td class="num-c">180.00 L</td><td class="num-c">&#8369;14,346.00</td></tr>
+                    <tr><td>ABDC</td><td>20260131</td><td class="num-c">40.00 L</td><td class="num-c">&#8369;3,188.00</td></tr>
+                    <tr><td>COSTA</td><td>20260134</td><td class="num-c">20.00 L</td><td class="num-c">&#8369;1,592.00</td></tr>
+                  </tbody>
+                  <tfoot><tr><td colspan="2">Grand total</td><td class="num-c">421.00 L</td><td class="num-c">&#8369;33,458.90</td></tr></tfoot>
+                </table>
+              </div>
+              <div class="acts"><button class="btn">Download PDF</button><button class="btn gh">Print</button></div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen F</b> &mdash; summaries also group by vehicle and by driver, further down the same panel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 CORRECT ============ -->
+<section class="sec" id="correct">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">05</span>
+      <p class="eyebrow">Corrections</p>
+      <h2>Fix a mistake, or remove a record</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          Editing is the normal way to correct a record and is available to administrators and staff.
+          Deleting is deliberately harder, and only administrators can complete it.
+        </p>
+        <ol class="steps">
+          <li>Find the record on the <b>Transactions</b> page, or in <b>Recent transactions</b> on the dashboard.</li>
+          <li>Select <b>Edit</b>. The form opens with the current values already filled in.</li>
+          <li>Change what you need and save. If you altered the unit price or litres, the amount is recalculated for you.</li>
+          <li>To remove a record, select <b>Delete</b> and type <kbd>DELETE</kbd> in capitals into the confirmation box.</li>
+          <li>Select <b>Delete transaction</b> to confirm. Anything other than exactly <kbd>DELETE</kbd> is refused.</li>
+        </ol>
+        <p class="note warn"><b>Every change is logged.</b> Creations, edits, deletions and sign-ins are written to the audit log with your name and the time, and the previous values are kept. Corrections are safe to make &mdash; but they are never anonymous.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">Delete transaction</span></div>
+          <div class="win-body scrim">
+            <div class="modal">
+              <div class="modal-h">
+                <div><h5>Delete transaction</h5><p>This removes the record from every total and report.</p></div><span class="x">&times;</span>
+              </div>
+              <table class="mt">
+                <tbody>
+                  <tr><td>Date</td><td class="num-c">8/15/2026</td></tr>
+                  <tr><td>P.O. number</td><td class="num-c">20260134</td></tr>
+                  <tr><td>Amount</td><td class="num-c">&#8369;1,592.00</td></tr>
+                </tbody>
+              </table>
+              <div class="fld"><span>Type DELETE to confirm</span><i>DELETE</i></div>
+              <div class="acts"><button class="btn dg">Delete transaction</button><button class="btn gh">Cancel</button></div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen G</b> &mdash; the confirmation. The same pattern guards companies, vehicles, operators, purposes and users.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 REFERENCE DATA ============ -->
+<section class="sec alt" id="reference">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">06</span>
+      <p class="eyebrow">Foundations</p>
+      <h2>Keep the reference lists accurate</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          <b>Companies</b>, <b>Vehicles</b>, <b>Operators</b> and <b>Purposes</b> all behave the same
+          way. They feed the drop-downs on the transaction form, so a missing entry here is the usual
+          reason someone cannot record a purchase.
+        </p>
+        <ol class="steps">
+          <li>Open the page you need from the sidebar. The table shows how many transactions already reference each row &mdash; useful before you change anything.</li>
+          <li>Select <b>Add company</b>, <b>Add vehicle</b>, <b>Add operator</b> or <b>Add purpose</b> at the top right, complete the form, and save.</li>
+          <li>Use <b>Edit</b> on any row to correct it. Setting a row to inactive keeps its history intact but removes it from the drop-downs on new transactions.</li>
+          <li>On Companies, Operators and Purposes you also get a <b>Search</b> box with a live result count, plus <b>Print</b> and <b>Download Excel</b>.</li>
+          <li><b>Delete</b> asks you to type <kbd>DELETE</kbd>, exactly as transactions do, and is administrator-only.</li>
+        </ol>
+        <p class="note"><b>What each list is for.</b> Companies are the entities being charged. Vehicles carry the plate, assigned driver and whether an odometer reading is required. Operators are drivers and equipment users. Purposes categorise the fuel use and mark it as personal or billable.</p>
+        <p class="note"><b>The Vehicles page has no search box.</b> It is the one list without the search, print and export tools, so use your browser's find (<kbd>Ctrl</kbd> + <kbd>F</kbd>) on a long fleet.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/vehicles</span></div>
+          <div class="win-body">
+            <div class="mini">
+              <div class="mini-side">
+                <div class="mini-brand"><span class="mark">DO</span><div><strong>Fuel Monitoring</strong><small>DO Plaza Holdings</small></div></div>
+                <div class="mini-nav">
+                  <span>Dashboard</span><span>Transactions</span><span>Companies</span>
+                  <span class="on">Vehicles</span><span>Operators</span><span>Purposes</span><span>Insurance</span><span>Reports</span><span class="adm">Settings</span>
+                </div>
+              </div>
+              <div class="mini-main">
+                <div class="mini-head">
+                  <div class="hb"><span class="mark sm">DO</span><div><strong>Fuel Monitoring System</strong><small>DO Plaza Holdings &middot; Asia/Manila</small></div></div>
+                  <span class="who">DENNIS A. DIZON &mdash; ADMINISTRATOR</span>
+                </div>
+                <div class="mini-content">
+                  <div class="ph">
+                    <div><h4>Vehicle management</h4><p>Manage fleet assets and assign them to companies.</p></div>
+                    <button class="btn">Add vehicle</button>
+                  </div>
+                  <table class="mt">
+                    <thead><tr><th>Vehicle</th><th>Company</th><th>Type</th><th>Driver</th><th class="num-c">Fuel records</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody>
+                      <tr><td>ABC-1747 &mdash; Mitsubishi Strada</td><td>ABDC</td><td>Pickup</td><td>&mdash;</td><td class="num-c">0</td><td><span class="pill ok">ACTIVE</span></td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      <tr><td>CASI&Ntilde;AS PROPERTY</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td class="num-c">4</td><td><span class="pill ok">ACTIVE</span></td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      <tr><td>GENERATOR</td><td>VRI</td><td>Equipment</td><td>&mdash;</td><td class="num-c">1</td><td><span class="pill ok">ACTIVE</span></td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                      <tr><td>HILUX ZAF 7862</td><td>COSTA</td><td>Pickup</td><td>HAROLD A. BOISER</td><td class="num-c">16</td><td><span class="pill ok">ACTIVE</span></td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen H</b> &mdash; a reference list. Rows show the plate, and the asset name only when it differs.</p>
+      </div>
+
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">Add vehicle</span></div>
+          <div class="win-body scrim">
+            <div class="modal">
+              <div class="modal-h">
+                <div><h5>Add vehicle</h5><p>Complete the fields below, then save your changes.</p></div><span class="x">&times;</span>
+              </div>
+              <div class="form2">
+                <div class="fld"><span>Plate / asset ID</span><i>HILUX ZAF 7862</i></div>
+                <div class="fld"><span>Asset name</span><i class="ph2">Optional</i></div>
+                <div class="fld"><span>Company</span><i>COSTA &mdash; Costa Ventures</i></div>
+                <div class="fld"><span>Vehicle type</span><i>Pickup</i></div>
+                <div class="fld"><span>Make</span><i>Toyota</i></div>
+                <div class="fld"><span>Model</span><i>Hilux</i></div>
+                <div class="fld"><span>Assigned driver</span><i>HAROLD A. BOISER</i></div>
+                <div class="fld"><span>Status</span><i>ACTIVE</i></div>
+              </div>
+              <div style="font-size:.55rem;color:var(--muted);display:flex;gap:5px;align-items:center">
+                <span style="width:9px;height:9px;border:1.4px solid var(--accent);border-radius:2px;display:inline-block"></span>
+                Odometer required
+              </div>
+              <div class="acts"><button class="btn">Save vehicle</button><button class="btn gh">Cancel</button></div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen I</b> &mdash; the add and edit form is the same panel; editing simply arrives pre-filled.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 MONITOR ============ -->
+<section class="sec" id="monitor">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">07</span>
+      <p class="eyebrow">Oversight</p>
+      <h2>Watch policies and read the reports</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          Both pages are read-only for every role. They answer questions; they do not change anything.
+        </p>
+        <ol class="steps">
+          <li>Open <b>Insurance</b>. Policies are sorted by expiry date, soonest first, so the top of the table is always what needs attention.</li>
+          <li>Any policy whose end date has passed is marked <b>EXPIRED</b> regardless of its recorded status.</li>
+          <li>Open <b>Reports</b> for the monthly summary: month, company, litres, actual spend, requested amount, and the <b>Variance</b> between the last two.</li>
+          <li>The cards above the table name the standard reporting views your data supports &mdash; monthly and semi-monthly summaries, usage by company and vehicle, price-per-litre trend, requested against actual, and more.</li>
+        </ol>
+        <p class="note">Insurance records are created directly in the database rather than through the application, so if a vehicle is missing here, ask an administrator to add its policy.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/insurance</span></div>
+          <div class="win-body">
+            <div class="mini-content" style="padding:13px">
+              <div class="ph"><div><h4>Insurance monitoring</h4><p>Policy expiry, renewal and attachment tracking.</p></div></div>
+              <table class="mt">
+                <thead><tr><th>Vehicle</th><th>Insurer</th><th>Policy</th><th>Start</th><th>End</th><th class="num-c">Premium</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>HILUX LAR 6084</td><td>Malayan</td><td>MP-77410</td><td>3/1/2025</td><td>2/28/2026</td><td class="num-c">18,400.00</td><td><span class="pill dg">EXPIRED</span></td></tr>
+                  <tr><td>HILUX ZAF 7862</td><td>Pioneer</td><td>PN-20913</td><td>10/1/2025</td><td>9/30/2026</td><td class="num-c">21,750.00</td><td><span class="pill ok">ACTIVE</span></td></tr>
+                  <tr><td>ABC-1747</td><td>Standard</td><td>SD-11288</td><td>1/15/2026</td><td>1/14/2027</td><td class="num-c">16,900.00</td><td><span class="pill ok">ACTIVE</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen J</b> &mdash; insurance, sorted by expiry so the most urgent policy is first.</p>
+      </div>
+
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/reports</span></div>
+          <div class="win-body">
+            <div class="mini-content" style="padding:13px">
+              <div class="ph"><div><h4>Reports</h4><p>Normalized monthly and semi-monthly business reporting.</p></div></div>
+              <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+                <div class="kpi"><strong style="font-size:.6rem">Monthly fuel summary</strong><span style="margin-top:2px">Filterable query</span></div>
+                <div class="kpi"><strong style="font-size:.6rem">Semi-monthly</strong><span style="margin-top:2px">1&ndash;15 / 16&ndash;end</span></div>
+                <div class="kpi"><strong style="font-size:.6rem">Price-per-litre trend</strong><span style="margin-top:2px">Filterable query</span></div>
+              </div>
+              <div class="panel">
+                <h5>Monthly summary</h5>
+                <table class="mt">
+                  <thead><tr><th>Month</th><th>Company</th><th class="num-c">Litres</th><th class="num-c">Actual</th><th class="num-c">Requested</th><th class="num-c">Variance</th></tr></thead>
+                  <tbody>
+                    <tr><td>2026-08</td><td>DOPHC</td><td class="num-c">180.00 L</td><td class="num-c">&#8369;14,346.00</td><td class="num-c">&#8369;14,500.00</td><td class="num-c">&#8369;154.00</td></tr>
+                    <tr><td>2026-08</td><td>ABDC</td><td class="num-c">40.00 L</td><td class="num-c">&#8369;3,188.00</td><td class="num-c">&#8369;3,200.00</td><td class="num-c">&#8369;12.00</td></tr>
+                    <tr><td>2026-07</td><td>DOPHC</td><td class="num-c">402.50 L</td><td class="num-c">&#8369;31,918.25</td><td class="num-c">&#8369;31,900.00</td><td class="num-c">&#8369;-18.25</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen K</b> &mdash; reports. Variance is requested minus actual, so a negative figure means more was pumped than asked for.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 ADMIN ============ -->
+<section class="sec alt" id="admin">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="num">08</span>
+      <p class="eyebrow">Settings</p>
+      <h2>One place for accounts and identity</h2>
+      <div class="sec-body">
+        <p class="sec-intro">
+          <b>Settings</b> holds four tabs. <b>Account</b> is available to everyone; <b>Branding</b>,
+          <b>Users</b> and <b>Audit log</b> appear for administrators only, so most people open
+          Settings and see a single tab.
+        </p>
+        <ol class="steps">
+          <li><b>Account</b> &mdash; change your own password here. Everyone has this tab, whatever their role.</li>
+          <li><b>Branding</b> &mdash; change the <b>system name</b>, <b>short name</b> and <b>tagline</b> that appear on the sign-in page, browser tab, sidebar and header.</li>
+          <li>Under footer branding, upload a <b>provider logo</b> (PNG, JPG or WebP up to 2&nbsp;MB) or set a short <b>letter mark</b> used when no logo is present. Select <b>Save branding</b> to apply.</li>
+          <li><b>Users</b> &mdash; select <b>Add user</b>, then set a name, email, role and a password of at least eight characters, entered twice. Leave the password blank when editing to keep the current one.</li>
+          <li>Deactivate someone by clearing <b>Active</b> instead of deleting them; their history stays attached. The system will not let you remove your own administrator access or deactivate your own account.</li>
+          <li><b>Audit log</b> &mdash; the last 100 events, sign-ins, creations, edits and deletions, with the person, the record and the originating address.</li>
+        </ol>
+        <p class="note">Timezone, currency and upload storage are shown on the Branding tab but cannot be edited. They are fixed to Asia/Manila and the Philippine peso.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/settings?tab=users</span></div>
+          <div class="win-body">
+            <div class="mini-content" style="padding:13px">
+              <div class="ph">
+                <div><h4>Settings</h4><p>Account &middot; Branding &middot; <b>Users</b> &middot; Audit log</p></div>
+                <button class="btn">Add user</button>
+              </div>
+              <table class="mt">
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last login</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr><td>DENNIS A. DIZON <span class="pill">You</span></td><td>dennis.dizon@doplaza.ph</td><td>ADMINISTRATOR</td><td><span class="pill ok">Active</span></td><td>9/4/2026, 8:12 AM</td><td><div class="acts"><button class="btn sec2">Edit</button></div></td></tr>
+                  <tr><td>MARIA L. SANTOS</td><td>maria.santos@doplaza.ph</td><td>STAFF</td><td><span class="pill ok">Active</span></td><td>9/3/2026, 4:40 PM</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                  <tr><td>ROBERTO C. CRUZ</td><td>roberto.cruz@doplaza.ph</td><td>APPROVER</td><td><span class="pill ok">Active</span></td><td>8/29/2026, 9:05 AM</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                  <tr><td>ANNA P. REYES</td><td>anna.reyes@doplaza.ph</td><td>VIEWER</td><td><span class="pill">Inactive</span></td><td>Never</td><td><div class="acts"><button class="btn sec2">Edit</button><button class="btn dg">Delete</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen L</b> &mdash; <b>Settings &rsaquo; Users</b>. Your own account is marked <b>You</b> and cannot be deleted or demoted.</p>
+      </div>
+
+      <div>
+        <div class="win">
+          <div class="win-bar"><div class="dots"><i></i><i></i><i></i></div><span class="win-url">192.168.4.200:3010/settings?tab=audit</span></div>
+          <div class="win-body">
+            <div class="mini-content" style="padding:13px">
+              <div class="ph"><div><h4>Settings</h4><p>Account &middot; Branding &middot; Users &middot; <b>Audit log</b></p></div></div>
+              <table class="mt">
+                <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th>Origin</th></tr></thead>
+                <tbody>
+                  <tr><td>9/4/2026, 8:12:04 AM</td><td>DENNIS A. DIZON</td><td>LOGIN</td><td>User</td><td>192.168.4.31</td></tr>
+                  <tr><td>9/3/2026, 4:51:20 PM</td><td>MARIA L. SANTOS</td><td>CREATE</td><td>FuelTransaction</td><td>192.168.4.44</td></tr>
+                  <tr><td>9/3/2026, 4:47:02 PM</td><td>MARIA L. SANTOS</td><td>UPDATE</td><td>FuelTransaction</td><td>192.168.4.44</td></tr>
+                  <tr><td>9/2/2026, 11:20:38 AM</td><td>DENNIS A. DIZON</td><td>DELETE</td><td>Vehicle</td><td>192.168.4.31</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="cap"><b>Screen M</b> &mdash; <b>Settings &rsaquo; Audit log</b>. Entries are written by the system and cannot be edited or removed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="end">
+  <div class="wrap">
+    <p class="eyebrow">Quick reference</p>
+    <h2>Three things worth remembering.</h2>
+    <div class="end-grid">
+      <div>
+        <h6>Never type a total</h6>
+        <p>Enter the unit price and the litres. The amount is computed as <code>price &times; litres</code> and stored to the centavo &mdash; a typed total would disagree with every report.</p>
+      </div>
+      <div>
+        <h6>Deactivate before deleting</h6>
+        <p>Clearing <code>Active</code> removes a company, operator or purpose from new transactions while keeping its history. Deleting is for genuine mistakes only.</p>
+      </div>
+      <div>
+        <h6>Filters follow you out</h6>
+        <p>Whatever the filters show is exactly what <code>Print</code>, <code>Download Excel</code> and the summary <code>PDF</code> contain &mdash; including the totals row.</p>
+      </div>
+      <div>
+        <h6>If a drop-down is empty</h6>
+        <p>The entry is missing or inactive. Add it under Companies, Vehicles, Operators or Purposes, then return to the transaction form.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

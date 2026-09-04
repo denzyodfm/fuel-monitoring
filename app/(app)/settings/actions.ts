@@ -8,7 +8,7 @@ import {db} from "@/lib/db";
 import {BRANDING_KEY,getBranding} from "@/lib/branding";
 import {allowedLogoTypes,brandingDir,isBrandingKey,maxLogoBytes} from "@/lib/branding-storage";
 
-const fail=(message:string):never=>redirect(`/settings?error=${encodeURIComponent(message)}`);
+const fail=(message:string):never=>redirect(`/settings?tab=branding&error=${encodeURIComponent(message)}`);
 const discard=async(key:string|null)=>{if(key&&isBrandingKey(key))await unlink(resolve(brandingDir(),key)).catch(()=>{})};
 
 export async function saveBranding(formData:FormData){
@@ -39,5 +39,5 @@ export async function saveBranding(formData:FormData){
     db.auditLog.create({data:{userId:session.userId,action:"UPDATE_SETTINGS",entityType:"AppSetting",entityId:BRANDING_KEY,beforeValue:{...current},afterValue:value}})
   ]);
   revalidatePath("/","layout");
-  redirect("/settings?saved=1");
+  redirect("/settings?tab=branding&saved=1");
 }

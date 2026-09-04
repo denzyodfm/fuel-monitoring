@@ -1,1 +1,3 @@
-import {db} from "@/lib/db";import {requireSession} from "@/lib/auth";import {UserManagement} from "@/components/user-management";export default async function Page(){const session=await requireSession(["ADMINISTRATOR"]);const users=await db.user.findMany({where:{organizationId:session.organizationId},orderBy:{name:"asc"}});return <UserManagement users={users.map(user=>({id:user.id,name:user.name,email:user.email,role:user.role,active:user.active,lastLogin:user.lastLoginAt?.toLocaleString("en-PH")??"Never",current:user.id===session.userId}))}/>}
+import {redirect} from "next/navigation";
+// User management now lives inside Settings; keep the old path working for bookmarks.
+export default function Page(){redirect("/settings?tab=users")}

@@ -1,1 +1,3 @@
-import {db} from "@/lib/db";import {requireSession} from "@/lib/auth";import {EntityTable} from "@/components/entity-table";export default async function Page(){await requireSession(["ADMINISTRATOR"]);const x=await db.auditLog.findMany({include:{user:true},orderBy:{createdAt:"desc"},take:100});return <EntityTable title="Immutable audit log" description="Authentication and material data changes." headers={["Timestamp","User","Action","Entity","ID","Origin"]} rows={x.map(v=>[v.createdAt.toLocaleString("en-PH"),v.user?.name??"System",v.action,v.entityType,v.entityId??"—",v.ipAddress??"—"])}/>}
+import {redirect} from "next/navigation";
+// The audit log now lives inside Settings; keep the old path working for bookmarks.
+export default function Page(){redirect("/settings?tab=audit")}
