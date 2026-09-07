@@ -12,3 +12,6 @@ tmp/
 *.log
 dashboard-smoke.png
 tsconfig.tsbuildinfo
+
+# Database dumps contain live business data
+backups/
