@@ -31,7 +31,7 @@ export default async function Page(){
       kind="vehicle"
       title="Vehicle management"
       description="Manage fleet assets and assign them to companies."
-      headers={["Vehicle","Category","Company","Type","Driver","Fuel records","Status"]}
+      headers={["Vehicle","Category","Company","Type","Fuel","Driver","Fuel records","Status"]}
       companies={companies.map(item=>({value:item.id,label:`${item.code} — ${item.name}`}))}
       records={items.map(item=>({
         id:item.id,
@@ -39,6 +39,7 @@ export default async function Page(){
         Category:vehicleCategory(item.plateNumber,item.assetName,item.vehicleType),
         Company:item.company?.code??"—",
         Type:item.vehicleType??"—",
+        Fuel:item.fuelType??"—",
         Driver:item.assignedDriver??"—",
         "Fuel records":item._count.transactions,
         Status:item.status,
