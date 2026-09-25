@@ -224,6 +224,7 @@ model FuelTransaction {
   requestedAmount Decimal? @db.Decimal(14,2)
   odometer Decimal? @db.Decimal(14,2)
   notes String?
+  fuelType String? @db.VarChar(40)
   status TransactionStatus @default(DRAFT)
   source TransactionSource @default(MANUAL)
   overrideReason String?

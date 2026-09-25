@@ -1,19 +1,19 @@
 import {normalize,vehicleLabel} from "./format";
 
-export type FuelKind="diesel"|"gasoline"|"unspecified";
+export type FuelKind="diesel"|"gasoline"|"other"|"unspecified";
 export const FUEL_TYPES=["Diesel","Gasoline"] as const;
 
-// Vehicle.fuelType is free text, so older spellings ("DSL", "Unleaded", "Premium")
-// still land in the right column of the consumption report.
+// Fuel type is free text (typed in under "Others", or set on the vehicle), so common
+// spellings ("DSL", "Unleaded", "Premium") still land in the right column of the report.
 export const fuelKind=(fuelType?:string|null):FuelKind=>{
   const value=normalize(fuelType??"");
   if(/DIESEL|DSL/.test(value))return "diesel";
-  if(/GAS|PETROL|UNLEADED|PREMIUM|REGULAR/.test(value))return "gasoline";
-  return "unspecified";
+  if(/GASOLINE|PETROL|UNLEADED|PREMIUM|REGULAR/.test(value))return "gasoline";
+  return value?"other":"unspecified";
 };
 
-export type ConsumptionSource={liters:unknown;amount:unknown;companyOriginal:string|null;vehicleOriginal:string|null;company:{code:string}|null;vehicle:{id:string;plateNumber:string;assetName:string|null;fuelType:string|null}|null};
-export type ConsumptionRow={vehicle:string;diesel:number;gasoline:number;unspecified:number;amount:number};
+export type ConsumptionSource={liters:unknown;amount:unknown;fuelType:string|null;companyOriginal:string|null;vehicleOriginal:string|null;company:{code:string}|null;vehicle:{id:string;plateNumber:string;assetName:string|null;fuelType:string|null}|null};
+export type ConsumptionRow={vehicle:string;diesel:number;gasoline:number;other:number;unspecified:number;amount:number};
 export type ConsumptionGroup={company:string;rows:ConsumptionRow[];amount:number};
 
 // One row per vehicle under its charging company, as on the printed monthly report.
@@ -24,8 +24,9 @@ export function buildConsumption(transactions:ConsumptionSource[]){
     const company=item.company?.code??item.companyOriginal??"Unmapped";
     const key=item.vehicle?.id??`original:${item.vehicleOriginal??""}`;
     const vehicles=groups.get(company)??new Map<string,ConsumptionRow>();groups.set(company,vehicles);
-    const row=vehicles.get(key)??{vehicle:item.vehicle?vehicleLabel(item.vehicle.plateNumber,item.vehicle.assetName):item.vehicleOriginal||"No vehicle",diesel:0,gasoline:0,unspecified:0,amount:0};
-    row[fuelKind(item.vehicle?.fuelType)]+=Number(item.liters);row.amount+=Number(item.amount);
+    const row=vehicles.get(key)??{vehicle:item.vehicle?vehicleLabel(item.vehicle.plateNumber,item.vehicle.assetName):item.vehicleOriginal||"No vehicle",diesel:0,gasoline:0,other:0,unspecified:0,amount:0};
+    // What was recorded on the transaction wins; the vehicle's usual fuel covers older records.
+    row[fuelKind(item.fuelType||item.vehicle?.fuelType)]+=Number(item.liters);row.amount+=Number(item.amount);
     vehicles.set(key,row);
   }
   const result:ConsumptionGroup[]=[...groups].map(([company,vehicles])=>{
@@ -33,7 +34,7 @@ export function buildConsumption(transactions:ConsumptionSource[]){
     return {company,rows,amount:rows.reduce((sum,row)=>sum+row.amount,0)};
   }).sort((a,b)=>b.amount-a.amount);
   const all=result.flatMap(group=>group.rows);
-  const total={diesel:all.reduce((s,r)=>s+r.diesel,0),gasoline:all.reduce((s,r)=>s+r.gasoline,0),unspecified:all.reduce((s,r)=>s+r.unspecified,0),amount:all.reduce((s,r)=>s+r.amount,0)};
+  const total={diesel:all.reduce((s,r)=>s+r.diesel,0),gasoline:all.reduce((s,r)=>s+r.gasoline,0),other:all.reduce((s,r)=>s+r.other,0),unspecified:all.reduce((s,r)=>s+r.unspecified,0),amount:all.reduce((s,r)=>s+r.amount,0)};
   return {groups:result,total};
 }
 
